@@ -4,13 +4,14 @@ import Layout from '@layouts/Default.astro';
 import BlogList from '@components/blog/BlogList.astro';
 
 const posts = await getCollection('blog').then((collection) =>
-  collection.reverse()
+  // collection.reverse()
+  collection
 );
 ---
 
 <Layout
   title='Blog'
-  description='MemoryView Blog | On this page you can find a collection of blogposts'
+  description='MemoryView Blog | On this page you can find a collection of blogposts'
   pageTitle='MemoryView Blog'
 >
   <main class='bg-green p-6'>

@@ -1,7 +1,7 @@
 ---
 title: "Tech News Roundup: iOS 18.2 Beta, PS5 Pro India Delay, Bharat 6G Progress, Unix Notes Neckband, ED Raids, and iQOO 13 Launch"
-pubDate: 11/10/2024 21:11
-author: "TechNerd Guru"
+pubDate: 2024-11-10 21:11
+author: "Jainil Prajapati"
 tags:
   - Technology News
   - Apple
