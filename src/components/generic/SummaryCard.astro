@@ -21,6 +21,7 @@ const { title, imgAlt, imgSrc, description } = Astro.props;
       width={800}
       height={400}
       class='rounded h-full w-full object-cover'
+      loading="lazy"
     />
   </div>
   <p class='poppins'>{description}</p>
