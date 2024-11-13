@@ -3,9 +3,12 @@ import { getCollection } from 'astro:content';
 import Layout from '@layouts/Default.astro';
 import BlogList from '@components/blog/BlogList.astro';
 
+// const posts = await getCollection('blog').then((collection) =>
+//   // collection.reverse()
+//   collection
+// );
 const posts = await getCollection('blog').then((collection) =>
-  // collection.reverse()
-  collection
+  collection.sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime())
 );
 ---
 

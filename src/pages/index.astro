@@ -7,14 +7,24 @@ import { Button } from '@eliancodes/brutal-ui';
 import { Card } from '@eliancodes/brutal-ui';
 import { getCollection } from 'astro:content';
 
+// // Get all posts and their tags
+// const posts = await getCollection('blog');
+// // Get unique tags from most recent posts first, limited to 10
+// const tags = [...new Set(posts
+//   .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime())
+//   .slice(0, 10)
+//   .map((post) => post.data.tags)
+//   .flat()
+// )];
 // Get all posts and their tags
 const posts = await getCollection('blog');
-// Get unique tags from most recent posts first, limited to 10
+// Get unique tags from most recent posts first, limited to 10 unique tags
 const tags = [...new Set(posts
   .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime())
-  .slice(0, 10)
+  .slice(0, 10) // Get 10 most recent posts
   .map((post) => post.data.tags)
   .flat()
+  .slice(0, 10) // Limit to 10 tags
 )];
 ---
 
