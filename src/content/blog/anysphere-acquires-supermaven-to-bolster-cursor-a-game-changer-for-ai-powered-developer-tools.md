@@ -69,5 +69,5 @@ Stay tuned to see how this merger transforms Cursor and drives further advanceme
 
 ## Sources
 
-- [TechCrunch: Anysphere Acquires Supermaven to Beef Up Cursor](https://techcrunch.com/2024/11/12/anysphere-acquires-supermaven-to-beef-up-cursor/)
-- [Cursor Blog: Supermaven Acquisition](https://www.cursor.com/blog/supermaven)
+<!-- - [TechCrunch: Anysphere Acquires Supermaven to Beef Up Cursor](https://techcrunch.com/2024/11/12/anysphere-acquires-supermaven-to-beef-up-cursor/)
+- [Cursor Blog: Supermaven Acquisition](https://www.cursor.com/blog/supermaven) -->
