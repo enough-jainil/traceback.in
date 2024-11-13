@@ -23,6 +23,8 @@ This blog unpacks the significance of this acquisition and what it means for dev
 
 ## What is Cursor?
 
+![alt text](https://miro.medium.com/v2/resize:fit:1400/1*SHP51N233kORM3TBsPRB8Q.png)
+
 Cursor, developed by Anysphere, is an AI-powered code editor designed to assist developers in writing, debugging, and optimizing code more efficiently. It's not just a typical code editor—it integrates deep learning models to understand and anticipate the needs of programmers, making suggestions, automating repetitive tasks, and offering intelligent insights based on the developer's workflow. Cursor’s popularity lies in its ability to enhance productivity and reduce friction in the coding process, making it particularly appealing to both individual developers and larger engineering teams.
 
 ### Key Features of Cursor
@@ -32,6 +34,8 @@ Cursor, developed by Anysphere, is an AI-powered code editor designed to assist 
 - **Workflow Integration**: Integration with popular development tools and platforms, allowing seamless collaboration across different environments.
 
 ## Who is Supermaven?
+
+![Supermaven](https://supermaven.com/desc-image.png)
 
 Supermaven is a company that has carved out a niche in the AI developer tools space. Known for its innovative tools that simplify package management and dependency handling, Supermaven's technology provides enhanced control over large-scale codebases and enables developers to manage complex dependencies seamlessly. Supermaven’s tools are highly regarded among developers who work with large-scale projects, as they simplify the often tedious and complex process of managing project dependencies.
 
