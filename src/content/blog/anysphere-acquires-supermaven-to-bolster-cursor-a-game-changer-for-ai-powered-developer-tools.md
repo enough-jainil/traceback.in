@@ -67,7 +67,7 @@ Anysphere’s acquisition of Supermaven promises to make Cursor a powerhouse in 
 
 Stay tuned to see how this merger transforms Cursor and drives further advancements in the field of AI-driven developer tools.
 
-## Sources
+<!-- ## Sources
 
-<!-- - [TechCrunch: Anysphere Acquires Supermaven to Beef Up Cursor](https://techcrunch.com/2024/11/12/anysphere-acquires-supermaven-to-beef-up-cursor/)
+- [TechCrunch: Anysphere Acquires Supermaven to Beef Up Cursor](https://techcrunch.com/2024/11/12/anysphere-acquires-supermaven-to-beef-up-cursor/)
 - [Cursor Blog: Supermaven Acquisition](https://www.cursor.com/blog/supermaven) -->
