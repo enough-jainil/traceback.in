@@ -49,14 +49,25 @@ const { pageTitle } = Astro.props;
       {
         socialIcons.map((item) => (
           <li>
-            <a
+            {/* <a
               href={item.url}
               class='hover:text-green hover:underline transition-all duration-150 ease-in-out'
               target='_blank'
-              title={`'See @ElianCodes on ${item.name}`}
+              // title={`'See @ElianCodes on ${item.name}`}
+              title={`See @enough_jainil on ${item.name}`}
             >
               <div class:list={[item.icon, 'w-6 h-6']} />
-            </a>
+            </a> */}
+            <a
+  href={item.url}
+  class='hover:text-green hover:underline transition-all duration-150 ease-in-out'
+  target='_blank'
+  rel="noopener noreferrer"
+  title={`See @enough_jainil on ${item.name}`}
+  aria-label={`Visit Jainil Prajapati's ${item.name} profile`}
+>
+  <div class:list={[item.icon, 'w-6 h-6']} aria-hidden="true" />
+</a>
           </li>
         ))
       }
