@@ -1,50 +1,38 @@
-name: nightly
+name: Nightly Build
 
-# on:
-#   schedule:
-#     - cron: '0 0 * * *'
 on:
   schedule:
-    # Run once per week on Sunday at midnight
-    - cron: "0 0 * * 0"
+    - cron: "0 0 * * *" # Runs at midnight UTC
 
 jobs:
-  upgrade:
+  check_changes:
     runs-on: ubuntu-latest
-    env:
-      NODE_OPTIONS: "--max_old_space_size=4096"
+    outputs:
+      should_run: ${{ steps.check.outputs.should_run }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v2
+      - uses: actions/checkout@v3
         with:
-          version: 8
+          fetch-depth: 0 # Required to check git history
 
+      - id: check
+        name: Check for changes
+        run: |
+          # Check if there were any commits in the last 24 hours
+          if [ -n "$(git rev-list --after="24 hours" ${{ github.sha }})" ]; then
+            echo "should_run=true" >> $GITHUB_OUTPUT
+          else
+            echo "should_run=false" >> $GITHUB_OUTPUT
+          fi
+
+  build:
+    needs: check_changes
+    if: ${{ needs.check_changes.outputs.should_run == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      # Your existing build steps here
+      - uses: actions/checkout@v3
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
-          node-version: 20
-          cache: pnpm
-
-      - name: Install dependencies
-        run: pnpm install
-
-      # - name: Upgrade Astro
-      #   run: pnpm dlx @astrojs/upgrade --yes
-      - name: Upgrade Astro
-        run: pnpm dlx @astrojs/upgrade --yes
-        # Add retries with exponential backoff
-        continue-on-error: true
-        timeout-minutes: 10
-
-      - name: PR Changes
-        uses: peter-evans/create-pull-request@v4
-        with:
-          branch: ci/update-astro
-          commit-message: "ci: update Astro"
-          assignees: eliancodes
-          title: "ci: update Astro"
-          body: Update Astro and packages to latest version
-          labels: ci
+          node-version: "16"
+      # ... rest of your build steps
