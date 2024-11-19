@@ -17,15 +17,14 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@astrojs/check": "^0.9.4",
     "@astrojs/rss": "^4.0.9",
     "@astrojs/sitemap": "^3.2.1",
     "@eliancodes/brutal-ui": "^0.2.3",
     "@unocss/astro": "^0.57.7",
-    "astro": "^4.16.10",
     "astro-font": "^0.0.80",
     "satori": "^0.5.0",
     "satori-html": "^0.3.2",
-    "@astrojs/check": "^0.9.4",
     "typescript": "^5.6.3"
   },
   "devDependencies": {
@@ -34,6 +33,7 @@
     "@resvg/resvg-js": "^2.6.0",
     "@typescript-eslint/parser": "^6.15.0",
     "@unocss/reset": "^0.57.7",
+    "astro": "^4.16.13",
     "eslint": "^8.56.0",
     "eslint-plugin-astro": "^0.29.1",
     "eslint-plugin-jsx-a11y": "^6.8.0",

@@ -2,19 +2,25 @@
 
 You can bootstrap a new Astro project using Brutal with the following command:
 
-```bash
+<!-- ```bash
 # npm 6.x
 npx create astro@latest --template eliancodes/brutal
 
 # npm 7+
 npm create astro@latest -- --template eliancodes/brutal
 
-# pnpm
+# pnpm (requires pnpm to be installed first - see note below)
 pnpm dlx create-astro --template eliancodes/brutal
 
 # yarn
 yarn create astro --template eliancodes/brutal
-```
+``` -->
+
+> **Note:** To use pnpm commands, you need to install pnpm first. You can install it using:
+>
+> ```bash
+> npm install -g pnpm
+> ```
 
 ### Commands
 
