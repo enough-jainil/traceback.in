@@ -1,13 +1,12 @@
 ---
 title: "Qarib Qarib Singlle (2017) Review"
-description: "A groundbreaking sci-fi masterpiece that revolutionized action cinema and explored deep philosophical themes about reality and consciousness."
+description: "Qarib Qarib Singlle is a delightful exploration of love and self-discovery, showcasing the journey of two contrasting characters as they navigate their pasts and embrace life's imperfections."
 pubDate: 2024-03-20 14:00
 author: "Jainil Prajapati"
 tags:
   - Drama
   - Comedy
   - Romance
-  - Life Lessons
 imgUrl: "../../assets/astro.jpeg"
 movieId: 479918
 layout: "@components/layout/MovieReview.astro"
@@ -66,4 +65,4 @@ Qarib Qarib Singlle is a movie that celebrates modern-day relationships, dating 
 
 Irrfan and Parvathy’s effortless chemistry, the simplicity of the story, and the soulful music make this film a delightful experience. If you’re a fan of light-hearted yet heartwarming movies, Qarib Qarib Singlle is a must-watch!
 
-It leaves you with an important takeaway: life is a journey, and the real joy lies in enjoying the ride. So, pack your metaphorical bags and get ready for a cinematic journey that’s as memorable as it is meaningful!
+It leaves you with an important takeaway: life is a journey, and the real joy lies in enjoying the ride. So, pack your metaphorical bags and get ready for a cinematic journey that’s as memorable as it is meaningful.
