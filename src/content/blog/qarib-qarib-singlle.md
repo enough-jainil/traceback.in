@@ -7,7 +7,7 @@ tags:
   - Drama
   - Comedy
   - Romance
-imgUrl: "https://m.media-amazon.com/images/M/MV5BMTQ2NmU2OTItMGNkMi00ZDA4LWIzZjQtNDBmYjk5ZWU1ZDM3XkEyXkFqcGdeQXVyODMyODMxNDY@._V1_FMjpg_UX1000_.jpg"
+imgUrl: "../../assets/astro.jpeg"
 movieId: 479918
 layout: "@components/layout/MovieReview.astro"
 ---
