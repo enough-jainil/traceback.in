@@ -2,6 +2,7 @@
 import BaseNavigation from '@components/layout/BaseNavigation.astro';
 import BaseFooter from '@components/layout/BaseFooter.astro';
 import BaseHead from '../components/layout/BaseHead.astro';
+import RecentBlogPosts from '@components/generic/RecentBlogPosts.astro';
 import '../styles/global.css';
 
 interface Props {
@@ -10,9 +11,10 @@ interface Props {
   classList?: string;
   pageTitle?: string;
   ogImage?: URL;
+  showRecent?: boolean;
 }
 
-const { title, description, classList, pageTitle, ogImage } = Astro.props;
+const { title, description, classList, pageTitle, ogImage, showRecent = false } = Astro.props;
 ---
 
 <html lang='en' class='h-full'>
@@ -21,6 +23,13 @@ const { title, description, classList, pageTitle, ogImage } = Astro.props;
   <body class:list={[classList]}>
     <BaseNavigation {pageTitle} />
     <slot />
+    
+    {showRecent && (
+      <section class='p-6'>
+        <RecentBlogPosts count={3} />
+      </section>
+    )}
+    
     <BaseFooter />
   </body>
 </html>
