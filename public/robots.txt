@@ -2,3 +2,6 @@ User-agent: *
 Disallow: 
 Host: https://traceback.in/
 Sitemap: https://traceback.in/sitemap-index.xml
+
+# Host
+Host: https://traceback.in
