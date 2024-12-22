@@ -7,7 +7,7 @@ tags:
   - Drama
   - Comedy
   - Romance
-imgUrl: "../../assets/astro.jpeg"
+imgUrl: "../../assets/in-blog/qarib-qarib-singlle.jpg"
 movieId: 479918
 layout: "@components/layout/MovieReview.astro"
 ---

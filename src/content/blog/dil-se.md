@@ -6,7 +6,7 @@ author: "Jainil Prajapati"
 tags:
   - Drama
   - Romance
-imgUrl: "../../assets/astro.jpeg"
+imgUrl: "../../assets/in-blog/dil-se.jpg"
 movieId: 21210
 layout: "@components/layout/MovieReview.astro"
 ---
