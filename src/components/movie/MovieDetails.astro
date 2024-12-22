@@ -20,7 +20,7 @@ try {
 }
 
 if (!movieDetails || !movieCredits) {
-  return `<div class="text-center p-8">Error loading movie details. Please try again later.</div>`;
+  return `Please try again later`;
 }
 
 // Format runtime to hours and minutes
@@ -39,7 +39,7 @@ const releaseDate = new Date(movieDetails.release_date).toLocaleDateString('en-U
 const formatCurrency = (amount: number) => {
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
-    currency: 'USD',
+    currency: 'INR',
     minimumFractionDigits: 0,
     maximumFractionDigits: 0
   }).format(amount);
@@ -49,7 +49,7 @@ const formatCurrency = (amount: number) => {
 const director = movieCredits.crew.find(person => person.job === 'Director');
 const writers = movieCredits.crew.filter(person => ['Screenplay', 'Writer', 'Story'].includes(person.job));
 const producers = movieCredits.crew.filter(person => ['Producer', 'Executive Producer'].includes(person.job)).slice(0, 3);
-const cinematographer = movieCredits.crew.find(person => person.job === 'Director of Photography');
+// const cinematographer = movieCredits.crew.find(person => person.job === 'Director of Photography');
 const composer = movieCredits.crew.find(person => person.job === 'Original Music Composer');
 ---
 
@@ -97,12 +97,12 @@ const composer = movieCredits.crew.find(person => person.job === 'Original Music
           </div>
         )}
 
-        {cinematographer && (
+        <!-- {cinematographer && (
           <div class="mb-4">
             <h3 class="text-lg font-semibold text-gray-700">Cinematographer</h3>
             <p class="text-xl">{cinematographer.name}</p>
           </div>
-        )}
+        )} -->
 
         {composer && (
           <div class="mb-4">
