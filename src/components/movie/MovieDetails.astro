@@ -1,0 +1,107 @@
+---
+import { getMovieDetails, getMovieCredits, getSimilarMovies, getImageUrl } from '../../utils/tmdb';
+
+interface Props {
+  movieId: number;
+}
+
+const { movieId } = Astro.props;
+
+// Fetch all movie data in parallel
+const [movieDetails, movieCredits, similarMovies] = await Promise.all([
+  getMovieDetails(movieId),
+  getMovieCredits(movieId),
+  getSimilarMovies(movieId)
+]);
+
+// Format runtime to hours and minutes
+const hours = Math.floor(movieDetails.runtime / 60);
+const minutes = movieDetails.runtime % 60;
+const formattedRuntime = `${hours}h ${minutes}m`;
+
+// Format date
+const releaseDate = new Date(movieDetails.release_date).toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric'
+});
+
+// Format budget and revenue
+const formatCurrency = (amount: number) => {
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0
+  }).format(amount);
+};
+---
+
+<div class="movie-details w-full max-w-7xl mx-auto px-4">
+  <!-- Hero Section with Backdrop -->
+  <div class="relative h-[60vh] mb-8">
+    <img 
+      src={getImageUrl(movieDetails.backdrop_path, 'original')}
+      alt={`${movieDetails.title} backdrop`}
+      class="w-full h-full object-cover rounded-lg"
+    />
+    <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+    <div class="absolute bottom-0 left-0 p-8 text-white">
+      <h1 class="text-4xl md:text-6xl font-bold mb-2">{movieDetails.title}</h1>
+      <p class="text-xl italic text-gray-300">{movieDetails.tagline}</p>
+    </div>
+  </div>
+
+  <!-- Basic Info Grid -->
+  <div class="grid md:grid-cols-3 gap-8 mb-8">
+    <div class="col-span-2">
+      <h2 class="text-2xl font-bold mb-4">Overview</h2>
+      <p class="text-lg">{movieDetails.overview}</p>
+      
+      <div class="mt-6 grid grid-cols-2 gap-4">
+        <div>
+          <h3 class="font-semibold">Release Date</h3>
+          <p>{releaseDate}</p>
+        </div>
+        <div>
+          <h3 class="font-semibold">Runtime</h3>
+          <p>{formattedRuntime}</p>
+        </div>
+        <div>
+          <h3 class="font-semibold">Budget</h3>
+          <p>{formatCurrency(movieDetails.budget)}</p>
+        </div>
+        <div>
+          <h3 class="font-semibold">Revenue</h3>
+          <p>{formatCurrency(movieDetails.revenue)}</p>
+        </div>
+      </div>
+    </div>
+    
+    <div>
+      <img 
+        src={getImageUrl(movieDetails.poster_path)}
+        alt={`${movieDetails.title} poster`}
+        class="w-full rounded-lg shadow-lg"
+      />
+    </div>
+  </div>
+
+  <!-- Cast Section -->
+  <div class="mb-8">
+    <h2 class="text-2xl font-bold mb-4">Top Cast</h2>
+    <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+      {movieCredits.cast.slice(0, 6).map((actor) => (
+        <div class="text-center">
+          <img 
+            src={actor.profile_path ? getImageUrl(actor.profile_path) : '/placeholder-avatar.png'}
+            alt={actor.name}
+            class="w-full rounded-lg mb-2"
+          />
+          <p class="font-semibold">{actor.name}</p>
+          <p class="text-sm text-gray-600">{actor.character}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</div>
