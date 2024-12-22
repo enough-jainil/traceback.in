@@ -59,39 +59,39 @@ const formatCurrency = (amount: number) => {
 const director = movieCredits.crew.find(person => person.job === 'Director');
 const writers = movieCredits.crew.filter(person => ['Screenplay', 'Writer', 'Story'].includes(person.job));
 const producers = movieCredits.crew.filter(person => ['Producer', 'Executive Producer'].includes(person.job)).slice(0, 3);
-// const cinematographer = movieCredits.crew.find(person => person.job === 'Director of Photography');
 const composer = movieCredits.crew.find(person => person.job === 'Original Music Composer');
 ---
 
 <div class="movie-details w-full max-w-7xl mx-auto px-4 mt-8 md:mt-16">
-  <!-- Hero Section with Backdrop - Hidden on Mobile -->
-  <div class="hidden md:block relative h-[70vh] mb-12">
+  <!-- Combined Hero Section -->
+  <div class="relative h-[50vh] md:h-[70vh] mb-8 md:mb-12">
     <img 
       src={getImageUrl(movieDetails.backdrop_path, 'original')}
       alt={`${movieDetails.title} backdrop`}
       class="w-full h-full object-cover rounded-lg shadow-xl"
     />
     <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent"></div>
-    <div class="absolute bottom-0 left-0 p-12 text-white">
-      <h1 class="text-5xl md:text-7xl font-bold mb-4">{movieDetails.title}</h1>
-      <p class="text-2xl italic text-gray-300">{movieDetails.tagline}</p>
+    <div class="absolute bottom-0 left-0 p-6 md:p-12">
+      <h1 class="text-4xl md:text-7xl font-bold mb-2 md:mb-4 text-white">{movieDetails.title}</h1>
+      <p class="text-xl md:text-2xl italic text-gray-300">{movieDetails.tagline}</p>
+      <div class="flex flex-wrap gap-2 md:gap-3 mt-2 md:mt-4">
+        {movieDetails.genres.map((genre) => (
+          <span class="px-3 py-1 bg-white/20 rounded-full text-white text-sm hover:bg-white/30 transition-colors">
+            {genre.name}
+          </span>
+        ))}
+      </div>
     </div>
-  </div>
-
-  <!-- Mobile Title Section -->
-  <div class="md:hidden mb-8">
-    <h1 class="text-4xl font-bold mb-2">{movieDetails.title}</h1>
-    <p class="text-xl italic text-gray-600">{movieDetails.tagline}</p>
   </div>
 
   <!-- Basic Info Grid -->
   <div class="grid md:grid-cols-3 gap-6 md:gap-12 mb-12">
     <!-- Move poster to top on mobile -->
-    <div class="md:order-last md:col-span-1">
+    <div class="md:order-last md:col-span-1 hidden md:block">
       <img 
         src={getImageUrl(movieDetails.poster_path)}
         alt={`${movieDetails.title} poster`}
-        class="w-full rounded-lg shadow-xl"
+        class="w-full rounded-lg shadow-xl "
       />
     </div>
     
@@ -121,13 +121,6 @@ const composer = movieCredits.crew.find(person => person.job === 'Original Music
             <p class="text-xl">{producers.map(producer => producer.name).join(', ')}</p>
           </div>
         )}
-
-        <!-- {cinematographer && (
-          <div class="mb-4">
-            <h3 class="text-lg font-semibold text-gray-700">Cinematographer</h3>
-            <p class="text-xl">{cinematographer.name}</p>
-          </div>
-        )} -->
 
         {composer && (
           <div class="mb-4">
@@ -162,9 +155,30 @@ const composer = movieCredits.crew.find(person => person.job === 'Original Music
   <div class="mb-8 md:mb-12">
     <h2 class="text-2xl md:text-3xl font-bold mb-4 md:mb-6">Top Cast</h2>
     <div class="relative">
-      <div class="flex overflow-x-auto pb-4 md:grid md:grid-cols-4 lg:grid-cols-6 gap-4 md:gap-6 scrollbar-hide">
+      <!-- Scroll Controls for Desktop -->
+      <button 
+        class="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-black/20 hover:bg-black/40 text-white rounded-r p-2 transition-colors" 
+        id="scrollLeft"
+        aria-label="Scroll left"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+        </svg>
+      </button>
+      
+      <button 
+        class="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-black/20 hover:bg-black/40 text-white rounded-l p-2 transition-colors" 
+        id="scrollRight"
+        aria-label="Scroll right"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+        </svg>
+      </button>
+
+      <div class="flex overflow-x-auto pb-4 gap-4 md:gap-6 scrollbar-hide">
         {movieCredits.cast.slice(0, 6).map((actor) => (
-          <div class="flex-none w-36 md:w-auto text-center">
+          <div class="flex-none w-36 md:w-48 lg:w-56 text-center">
             <img 
               src={actor.profile_path ? getImageUrl(actor.profile_path) : '/placeholder-avatar.png'}
               alt={actor.name}
@@ -178,3 +192,41 @@ const composer = movieCredits.crew.find(person => person.job === 'Original Music
     </div>
   </div>
 </div>
+
+<script>
+  document.addEventListener('astro:page-load', () => {
+    const scrollContainer = document.querySelector('.flex.overflow-x-auto');
+    const leftButton = document.querySelector('#scrollLeft');
+    const rightButton = document.querySelector('#scrollRight');
+
+    if (!scrollContainer || !leftButton || !rightButton) return;
+
+    const scrollAmount = 300; // Adjust this value to control scroll distance
+
+    leftButton.addEventListener('click', () => {
+      scrollContainer.scrollBy({
+        left: -scrollAmount,
+        behavior: 'smooth'
+      });
+    });
+
+    rightButton.addEventListener('click', () => {
+      scrollContainer.scrollBy({
+        left: scrollAmount,
+        behavior: 'smooth'
+      });
+    });
+
+    // Show/hide scroll buttons based on scroll position
+    const toggleScrollButtons = () => {
+      const { scrollLeft, scrollWidth, clientWidth } = scrollContainer;
+      
+      leftButton.style.display = scrollLeft > 0 ? 'flex' : 'none';
+      rightButton.style.display = scrollLeft < scrollWidth - clientWidth - 10 ? 'flex' : 'none';
+    };
+
+    scrollContainer.addEventListener('scroll', toggleScrollButtons);
+    window.addEventListener('resize', toggleScrollButtons);
+    toggleScrollButtons(); // Initial check
+  });
+</script>

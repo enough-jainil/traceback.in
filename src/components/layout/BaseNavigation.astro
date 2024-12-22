@@ -9,26 +9,26 @@ const navigationItems = [
 ];
 
 const socialIcons = [
-  {
-    name: 'GitHub',
-    url: 'https://github.com/enough-jainil',
-    icon: 'i-uil-github',
-  },
-  {
-    name: 'Twitter',
-    url: 'https://x.com/enough_jainil',
-    icon: 'i-uil-twitter',
-  },
+  // {
+  //   name: 'GitHub',
+  //   url: 'https://github.com/enough-jainil',
+  //   icon: 'i-uil-github',
+  // },
+  // {
+  //   name: 'Twitter',
+  //   url: 'https://x.com/enough_jainil',
+  //   icon: 'i-uil-twitter',
+  // },
   { name: 'RSS', url: '/feed.xml', icon: 'i-uil-rss' },
 ];
 
 const { pageTitle } = Astro.props;
 ---
 
-<header class='border-b-4 border-black flex justify-between p-6 items-center'>
+<header class='border-b-4 border-black flex justify-between p-4 sm:p-6 items-center'>
   {pageTitle && <h1 class='hidden'>{pageTitle}</h1>}
   <a href='/' title='Back to Home'>
-    <p class='righteous md:text-5xl'>Traceback</p>
+    <p class='righteous text-2xl sm:text-3xl md:text-5xl'>Traceback</p>
   </a>
   <nav class='hidden md:inline-block'>
     <h2 class='hidden'>Navigation</h2>
@@ -55,19 +55,35 @@ const { pageTitle } = Astro.props;
               target='_blank'
               rel="noopener noreferrer"
               title={`Follow us on ${item.name}`}
-              aria-label={`Visit our ${item.name} profile`}
             >
-              <div class:list={[item.icon, 'w-6 h-6']} aria-hidden="true" />
+              <div class:list={[item.icon, 'w-6 h-6']} />
             </a>
           </li>
         ))
       }
     </ul>
   </nav>
-  <nav class='md:hidden flex'>
+  <nav class='md:hidden'>
     <h2 class='hidden'>Mobile Navigation</h2>
-    <ul>
-      <li><a href='/blog/'>Reviews</a></li>
+    <ul class='flex items-center gap-4'>
+      <li>
+        <a 
+          href='/blog/' 
+          class='text-base font-medium hover:text-green transition-all duration-150 ease-in-out'
+        >
+          Reviews
+        </a>
+      </li>
+      <li>
+        <a 
+          href='https://github.com/enough-jainil' 
+          target='_blank'
+          rel="noopener noreferrer"
+          class='hover:text-green transition-all duration-150 ease-in-out'
+        >
+          <div class='i-uil-github w-5 h-5' />
+        </a>
+      </li>
     </ul>
   </nav>
 </header>

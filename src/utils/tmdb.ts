@@ -117,6 +117,7 @@ export interface MovieCredits {
   }>;
 }
 
+// The following functions also store cache for TV show data
 export async function getMovieDetails(movieId: number): Promise<MovieDetails> {
   return withCache(`movie-${movieId}`, async () => {
     const response = await fetch(
@@ -175,6 +176,8 @@ export interface TVShowDetails {
     name: string;
     profile_path: string;
   }>;
+  vote_average: number;
+  vote_count: number;
 }
 
 export async function getTVShowDetails(tvId: number): Promise<TVShowDetails> {
