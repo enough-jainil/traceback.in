@@ -1,5 +1,5 @@
 ---
-import { getMovieDetails, getMovieCredits, getSimilarMovies, getImageUrl } from '../../utils/tmdb';
+import { getMovieDetails, getMovieCredits, getImageUrl } from '../../utils/tmdb';
 
 interface Props {
   movieId: number;
@@ -7,7 +7,7 @@ interface Props {
 
 const { movieId } = Astro.props;
 
-let movieDetails, movieCredits, similarMovies;
+let movieDetails, movieCredits;
 let error = null;
 
 try {

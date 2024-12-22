@@ -43,7 +43,6 @@ const formatDate = (dateStr: string) => {
 
 // Get key crew members
 const creators = tvDetails.created_by;
-const writers = tvCredits.crew.filter(person => ['Writer', 'Story Editor', 'Executive Story Editor'].includes(person.job));
 const producers = tvCredits.crew.filter(person => ['Producer', 'Executive Producer'].includes(person.job)).slice(0, 3);
 const composer = tvCredits.crew.find(person => person.job === 'Original Music Composer');
 ---
