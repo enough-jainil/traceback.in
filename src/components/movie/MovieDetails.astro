@@ -11,10 +11,9 @@ let movieDetails, movieCredits, similarMovies;
 let error = null;
 
 try {
-  [movieDetails, movieCredits, similarMovies] = await Promise.all([
+  [movieDetails, movieCredits] = await Promise.all([
     getMovieDetails(movieId),
-    getMovieCredits(movieId),
-    getSimilarMovies(movieId)
+    getMovieCredits(movieId)
   ]);
 } catch (e) {
   error = e;
@@ -221,8 +220,8 @@ const composer = movieCredits.crew.find(person => person.job === 'Original Music
     const toggleScrollButtons = () => {
       const { scrollLeft, scrollWidth, clientWidth } = scrollContainer;
       
-      leftButton.style.display = scrollLeft > 0 ? 'flex' : 'none';
-      rightButton.style.display = scrollLeft < scrollWidth - clientWidth - 10 ? 'flex' : 'none';
+      (leftButton as HTMLElement).style.display = scrollLeft > 0 ? 'flex' : 'none';
+      (rightButton as HTMLElement).style.display = scrollLeft < scrollWidth - clientWidth - 10 ? 'flex' : 'none';
     };
 
     scrollContainer.addEventListener('scroll', toggleScrollButtons);
