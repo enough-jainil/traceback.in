@@ -1,38 +1,78 @@
+import { Redis } from "@upstash/redis";
+
 const TMDB_API_KEY = "59cddbb62ceaa5026246385b46dd867a";
 const BASE_URL = "https://api.themoviedb.org/3";
 const IMAGE_BASE_URL = "https://image.tmdb.org/t/p";
 
-// Cache interface
-interface CacheItem<T> {
-  data: T;
-  timestamp: number;
-}
-
 // Cache configuration
-const CACHE_DURATION = 1000 * 60 * 60; // 1 hour in milliseconds
-const movieCache = new Map<string, CacheItem<any>>();
+const CACHE_DURATION = 60 * 60; // 1 hour in seconds
 
-// Helper function to check if cache is valid
-function isCacheValid(timestamp: number): boolean {
-  return Date.now() - timestamp < CACHE_DURATION;
+// In-memory fallback cache
+const memoryCache = new Map<string, { data: any; timestamp: number }>();
+
+// Redis client initialization with proper error handling
+let redis: Redis | null = null;
+try {
+  if (
+    process.env.UPSTASH_REDIS_REST_URL &&
+    process.env.UPSTASH_REDIS_REST_TOKEN
+  ) {
+    redis = new Redis({
+      url: process.env.UPSTASH_REDIS_REST_URL,
+      token: process.env.UPSTASH_REDIS_REST_TOKEN,
+    });
+  }
+} catch (error) {
+  console.error("Failed to initialize Redis client:", error);
 }
 
-// Generic cache wrapper for API calls
+// Generic cache wrapper with Redis and memory fallback
 async function withCache<T>(
   key: string,
   fetchFn: () => Promise<T>
 ): Promise<T> {
-  const cached = movieCache.get(key);
+  const cacheKey = `tmdb:${key}`;
 
-  if (cached && isCacheValid(cached.timestamp)) {
-    console.log(`Cache hit for ${key}`);
-    return cached.data;
+  try {
+    // Try Redis first if available
+    if (redis) {
+      const cachedData = await redis.get(cacheKey);
+      if (cachedData) {
+        console.log(`Redis cache hit for ${key}`);
+        return JSON.parse(cachedData as string);
+      }
+    }
+
+    // Check memory cache if Redis fails or is unavailable
+    const memoryCached = memoryCache.get(cacheKey);
+    if (
+      memoryCached &&
+      Date.now() - memoryCached.timestamp < CACHE_DURATION * 1000
+    ) {
+      console.log(`Memory cache hit for ${key}`);
+      return memoryCached.data;
+    }
+
+    // Fetch fresh data if no cache hit
+    console.log(`Cache miss for ${key}`);
+    const data = await fetchFn();
+
+    // Store in both caches
+    try {
+      if (redis) {
+        await redis.setex(cacheKey, CACHE_DURATION, JSON.stringify(data));
+      }
+      memoryCache.set(cacheKey, { data, timestamp: Date.now() });
+    } catch (error) {
+      console.error("Cache storage error:", error);
+    }
+
+    return data;
+  } catch (error) {
+    console.error("Cache error:", error);
+    // Final fallback: direct API call
+    return fetchFn();
   }
-
-  console.log(`Cache miss for ${key}`);
-  const data = await fetchFn();
-  movieCache.set(key, { data, timestamp: Date.now() });
-  return data;
 }
 
 export interface MovieDetails {
@@ -107,11 +147,3 @@ export async function getSimilarMovies(movieId: number): Promise<any> {
 export function getImageUrl(path: string, size: string = "original"): string {
   return `${IMAGE_BASE_URL}/${size}${path}`;
 }
-// Clean up expired cache items periodically
-setInterval(() => {
-  for (const [key, value] of movieCache.entries()) {
-    if (!isCacheValid(value.timestamp)) {
-      movieCache.delete(key);
-    }
-  }
-}, CACHE_DURATION);

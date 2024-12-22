@@ -7,20 +7,30 @@ interface Props {
 
 const { movieId } = Astro.props;
 
-// Fetch all movie data in parallel with error handling
 let movieDetails, movieCredits, similarMovies;
+let error = null;
+
 try {
   [movieDetails, movieCredits, similarMovies] = await Promise.all([
     getMovieDetails(movieId),
     getMovieCredits(movieId),
     getSimilarMovies(movieId)
   ]);
-} catch (error) {
-  console.error('Error fetching movie data:', error);
+} catch (e) {
+  error = e;
+  console.error('Error fetching movie data:', e);
 }
 
-if (!movieDetails || !movieCredits) {
-  return `Please try again later`;
+if (error || !movieDetails || !movieCredits) {
+  return `
+    <div class="flex flex-col items-center justify-center min-h-[50vh] text-center p-8">
+      <h2 class="text-2xl font-bold mb-4">Unable to load movie details</h2>
+      <p class="text-gray-600 mb-6">Please check your internet connection and try again.</p>
+      <button onclick="window.location.reload()" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+        Retry
+      </button>
+    </div>
+  `;
 }
 
 // Format runtime to hours and minutes
@@ -145,17 +155,17 @@ const composer = movieCredits.crew.find(person => person.job === 'Original Music
   <div class="mb-12">
     <h2 class="text-3xl font-bold mb-6">Top Cast</h2>
     <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-      {movieCredits.cast.slice(0, 6).map((actor) => (
+        {movieCredits.cast.slice(0, 6).map((actor) => (
         <div class="text-center">
-          <img 
-            src={actor.profile_path ? getImageUrl(actor.profile_path) : '/placeholder-avatar.png'}
-            alt={actor.name}
-            class="w-full rounded-lg shadow-lg mb-3"
-          />
-          <p class="font-semibold text-lg">{actor.name}</p>
-          <p class="text-gray-600">{actor.character}</p>
-        </div>
-      ))}
+            <img 
+              src={actor.profile_path ? getImageUrl(actor.profile_path) : '/placeholder-avatar.png'}
+              alt={actor.name}
+              class="w-full rounded-lg shadow-lg mb-3"
+            />
+            <p class="font-semibold text-lg">{actor.name}</p>
+            <p class="text-gray-600">{actor.character}</p>
+          </div>
+        ))}
     </div>
   </div>
 </div>
