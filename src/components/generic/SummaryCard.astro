@@ -15,26 +15,14 @@ const { title, imgAlt, imgSrc, description } = Astro.props;
 <Card color='white'>
   <h3 class='poppins text-lg md:text-xl'>{title}</h3>
   <div class='rounded-lg border-3 border-black my-4 h-56'>
-    {typeof imgSrc === 'string' ? (
-      <img
-        src={imgSrc}
-        alt={imgAlt}
-        width={800}
-        height={400}
-        class="rounded h-full w-full object-cover"
-        loading="lazy"
-      />
-    ) : (
-      <Image
-        src={imgSrc}
-        alt={imgAlt}
-        width={800}
-        height={400}
-        class="rounded h-full w-full object-cover"
-        loading="lazy"
-        inferSize={true}
-      />
-    )}
+    <Image
+      src={imgSrc}
+      alt={imgAlt}
+      width={800}
+      height={400}
+      class='rounded h-full w-full object-cover'
+      loading="lazy"
+    />
   </div>
   <p class='poppins'>{description}</p>
   <slot />
