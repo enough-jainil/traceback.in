@@ -30,7 +30,7 @@ export const GET: APIRoute = async ({ props }) => {
       <div style="display: flex; flex-direction: column; justify-content: space-between; width: 100%; filter: drop-shadow()">
         <div style="display: flex; justify-content: space-between;">
           <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-            <p style="font-size: 48px;">MemoryView</p>
+            <p style="font-size: 48px;">Traceback</p>
             <p style="font-size: 38px;">${title}</p>
           </div>
           <img src="https://eknerd.com/img/pfp.webp" width="200px" height="200px" style="border: 3px solid black; border-radius: 0.5rem;" />

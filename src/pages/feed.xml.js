@@ -1,11 +1,11 @@
-import rss from '@astrojs/rss';
-import { getCollection } from 'astro:content';
+import rss from "@astrojs/rss";
+import { getCollection } from "astro:content";
 
 export async function GET(context) {
-  const blog = await getCollection('blog');
+  const blog = await getCollection("blog");
   return rss({
-    title: 'MemoryView News',
-    description: 'The latest in tech, every day',
+    title: "Traceback Reviews",
+    description: "Deep dives into cinema's finest. Reviews, news, and more.",
     stylesheet: false,
     site: context.site,
     items: blog.map((post) => ({
@@ -14,7 +14,7 @@ export async function GET(context) {
       description: post.data.description,
       link: `/blog/${post.slug}/`,
     })),
-    customData: '<language>en-us</language>',
-    canonicalUrl: 'https://memoryview.in',
+    customData: "<language>en-us</language>",
+    canonicalUrl: "https://traceback.in",
   });
 }
