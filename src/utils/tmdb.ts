@@ -1,6 +1,6 @@
 import { Redis } from "@upstash/redis";
 
-const TMDB_API_KEY = import.meta.env.TMDB_API_KEY;
+const TMDB_API_KEY = "59cddbb62ceaa5026246385b46dd867a";
 const BASE_URL = "https://api.themoviedb.org/3";
 const IMAGE_BASE_URL = "https://image.tmdb.org/t/p";
 
