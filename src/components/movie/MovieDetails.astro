@@ -63,9 +63,9 @@ const producers = movieCredits.crew.filter(person => ['Producer', 'Executive Pro
 const composer = movieCredits.crew.find(person => person.job === 'Original Music Composer');
 ---
 
-<div class="movie-details w-full max-w-7xl mx-auto px-4 mt-16">
-  <!-- Hero Section with Backdrop -->
-  <div class="relative h-[70vh] mb-12">
+<div class="movie-details w-full max-w-7xl mx-auto px-4 mt-8 md:mt-16">
+  <!-- Hero Section with Backdrop - Hidden on Mobile -->
+  <div class="hidden md:block relative h-[70vh] mb-12">
     <img 
       src={getImageUrl(movieDetails.backdrop_path, 'original')}
       alt={`${movieDetails.title} backdrop`}
@@ -78,14 +78,29 @@ const composer = movieCredits.crew.find(person => person.job === 'Original Music
     </div>
   </div>
 
+  <!-- Mobile Title Section -->
+  <div class="md:hidden mb-8">
+    <h1 class="text-4xl font-bold mb-2">{movieDetails.title}</h1>
+    <p class="text-xl italic text-gray-600">{movieDetails.tagline}</p>
+  </div>
+
   <!-- Basic Info Grid -->
-  <div class="grid md:grid-cols-3 gap-12 mb-12">
-    <div class="col-span-2">
-      <h2 class="text-3xl font-bold mb-6">Overview</h2>
-      <p class="text-xl leading-relaxed mb-8">{movieDetails.overview}</p>
+  <div class="grid md:grid-cols-3 gap-6 md:gap-12 mb-12">
+    <!-- Move poster to top on mobile -->
+    <div class="md:order-last md:col-span-1">
+      <img 
+        src={getImageUrl(movieDetails.poster_path)}
+        alt={`${movieDetails.title} poster`}
+        class="w-full rounded-lg shadow-xl"
+      />
+    </div>
+    
+    <div class="md:col-span-2">
+      <h2 class="text-2xl md:text-3xl font-bold mb-4 md:mb-6">Overview</h2>
+      <p class="text-lg md:text-xl leading-relaxed mb-6 md:mb-8">{movieDetails.overview}</p>
       
       <!-- Key Crew Section -->
-      <div class="grid grid-cols-2 gap-6 mt-8">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6 mt-6 md:mt-8">
         {director && (
           <div class="mb-4">
             <h3 class="text-lg font-semibold text-gray-700">Director</h3>
@@ -122,7 +137,7 @@ const composer = movieCredits.crew.find(person => person.job === 'Original Music
         )}
       </div>
       
-      <div class="grid grid-cols-2 gap-6 mt-8">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6 mt-6 md:mt-8">
         <div>
           <h3 class="text-lg font-semibold text-gray-700">Release Date</h3>
           <p class="text-xl">{releaseDate}</p>
@@ -141,31 +156,25 @@ const composer = movieCredits.crew.find(person => person.job === 'Original Music
         </div>
       </div>
     </div>
-    
-    <div>
-      <img 
-        src={getImageUrl(movieDetails.poster_path)}
-        alt={`${movieDetails.title} poster`}
-        class="w-full rounded-lg shadow-xl"
-      />
-    </div>
   </div>
 
   <!-- Cast Section -->
-  <div class="mb-12">
-    <h2 class="text-3xl font-bold mb-6">Top Cast</h2>
-    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+  <div class="mb-8 md:mb-12">
+    <h2 class="text-2xl md:text-3xl font-bold mb-4 md:mb-6">Top Cast</h2>
+    <div class="relative">
+      <div class="flex overflow-x-auto pb-4 md:grid md:grid-cols-4 lg:grid-cols-6 gap-4 md:gap-6 scrollbar-hide">
         {movieCredits.cast.slice(0, 6).map((actor) => (
-        <div class="text-center">
+          <div class="flex-none w-36 md:w-auto text-center">
             <img 
               src={actor.profile_path ? getImageUrl(actor.profile_path) : '/placeholder-avatar.png'}
               alt={actor.name}
-              class="w-full rounded-lg shadow-lg mb-3"
+              class="w-full rounded-lg shadow-lg mb-2 md:mb-3"
             />
-            <p class="font-semibold text-lg">{actor.name}</p>
-            <p class="text-gray-600">{actor.character}</p>
+            <p class="font-semibold text-base md:text-lg whitespace-normal">{actor.name}</p>
+            <p class="text-gray-600 text-sm md:text-base whitespace-normal">{actor.character}</p>
           </div>
         ))}
+      </div>
     </div>
   </div>
 </div>
