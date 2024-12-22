@@ -147,3 +147,59 @@ export async function getSimilarMovies(movieId: number): Promise<any> {
 export function getImageUrl(path: string, size: string = "original"): string {
   return `${IMAGE_BASE_URL}/${size}${path}`;
 }
+
+export interface TVShowDetails {
+  id: number;
+  name: string;
+  overview: string;
+  tagline: string;
+  first_air_date: string;
+  last_air_date: string;
+  number_of_seasons: number;
+  number_of_episodes: number;
+  episode_run_time: number[];
+  status: string;
+  poster_path: string;
+  backdrop_path: string;
+  genres: Array<{
+    id: number;
+    name: string;
+  }>;
+  networks: Array<{
+    id: number;
+    name: string;
+    logo_path: string;
+  }>;
+  created_by: Array<{
+    id: number;
+    name: string;
+    profile_path: string;
+  }>;
+}
+
+export async function getTVShowDetails(tvId: number): Promise<TVShowDetails> {
+  return withCache(`tv-${tvId}`, async () => {
+    const response = await fetch(
+      `${BASE_URL}/tv/${tvId}?api_key=${TMDB_API_KEY}&language=en-US`
+    );
+    return response.json();
+  });
+}
+
+export async function getTVShowCredits(tvId: number): Promise<MovieCredits> {
+  return withCache(`tv-credits-${tvId}`, async () => {
+    const response = await fetch(
+      `${BASE_URL}/tv/${tvId}/credits?api_key=${TMDB_API_KEY}&language=en-US`
+    );
+    return response.json();
+  });
+}
+
+export async function getSimilarTVShows(tvId: number): Promise<any> {
+  return withCache(`tv-similar-${tvId}`, async () => {
+    const response = await fetch(
+      `${BASE_URL}/tv/${tvId}/similar?api_key=${TMDB_API_KEY}&language=en-US`
+    );
+    return response.json();
+  });
+}
