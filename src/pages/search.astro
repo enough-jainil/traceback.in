@@ -133,7 +133,7 @@ interface SearchResult {
     const results = fuse.search(target.value);
     const html = results
       .map(({ item }) => `
-        <article class="p-4 border-4 border-black rounded-lg bg-pink hover:bg-pink-200 transition-colors">
+        <div class="p-4 border-4 border-black rounded-lg bg-pink hover:bg-pink-200 transition-colors">
           <a href="/blog/${item.slug}/" class="block">
             <h2 class="text-2xl font-bold mb-2 dm-serif">${item.title}</h2>
             <p class="text-gray-800 mb-3 sanchez">${item.description}</p>
@@ -145,7 +145,7 @@ interface SearchResult {
               `).join('')}
             </div>
           </a>
-        </article>
+          </div>
       `)
       .join('');
 
