@@ -45,53 +45,81 @@ interface SearchResult {
   }
 
   let fuse: Fuse<SearchResult>;
+  let searchInput: HTMLInputElement | null;
+  let searchResults: HTMLDivElement | null;
 
   async function initSearch() {
-    const response = await fetch('/api/search-index');
-    const posts: SearchResult[] = await response.json();
-    
-    fuse = new Fuse(posts, {
-      keys: ['title', 'description', 'tags'],
-      threshold: 0.4,
-      includeMatches: true
-    });
-
-    const searchInput = document.getElementById('search-input') as HTMLInputElement;
-    const searchResults = document.getElementById('search-results');
+    // Reset references
+    searchInput = document.getElementById('search-input') as HTMLInputElement;
+    searchResults = document.getElementById('search-results') as HTMLDivElement;
 
     if (!searchInput || !searchResults) return;
 
-    searchInput.addEventListener('input', (e) => {
-      const target = e.target as HTMLInputElement;
-      const results = fuse.search(target.value);
+    // Fetch search index if not already fetched
+    if (!fuse) {
+      const response = await fetch('/api/search-index');
+      const posts: SearchResult[] = await response.json();
+      
+      fuse = new Fuse(posts, {
+        keys: ['title', 'description', 'tags'],
+        threshold: 0.4,
+        includeMatches: true
+      });
+    }
 
-      if (!target.value) {
-        searchResults.innerHTML = '';
-        return;
-      }
+    // Clear any previous event listeners
+    const newSearchInput = searchInput.cloneNode(true) as HTMLInputElement;
+    searchInput.parentNode?.replaceChild(newSearchInput, searchInput);
+    searchInput = newSearchInput;
 
-      const html = results
-        .map(({ item }) => `
-          <article class="p-4 border-2 border-black rounded-lg hover:bg-gray-50 transition-colors">
-            <a href="/blog/${item.slug}/" class="block">
-              <h2 class="text-xl font-bold mb-2">${item.title}</h2>
-              <p class="text-gray-600">${item.description}</p>
-              <div class="mt-2 flex gap-2 flex-wrap">
-                ${item.tags.map(tag => `
-                  <span class="px-2 py-1 text-sm border border-black rounded-full">
-                    ${tag}
-                  </span>
-                `).join('')}
-              </div>
-            </a>
-          </article>
-        `)
-        .join('');
-
-      searchResults.innerHTML = html || '<p class="text-center text-gray-500">No results found</p>';
-    });
+    // Add event listener
+    searchInput.addEventListener('input', handleSearch);
+    
+    // Restore previous search if exists
+    const previousSearch = sessionStorage.getItem('lastSearch');
+    if (previousSearch) {
+      searchInput.value = previousSearch;
+      handleSearch({ target: searchInput } as any);
+    }
   }
 
-  // Initialize on page load
+  function handleSearch(e: Event) {
+    const target = e.target as HTMLInputElement;
+    if (!searchResults || !fuse) return;
+
+    // Save search term
+    sessionStorage.setItem('lastSearch', target.value);
+
+    if (!target.value) {
+      searchResults.innerHTML = '';
+      return;
+    }
+
+    const results = fuse.search(target.value);
+    const html = results
+      .map(({ item }) => `
+        <article class="p-4 border-2 border-black rounded-lg hover:bg-gray-50 transition-colors">
+          <a href="/blog/${item.slug}/" class="block">
+            <h2 class="text-xl font-bold mb-2">${item.title}</h2>
+            <p class="text-gray-600">${item.description}</p>
+            <div class="mt-2 flex gap-2 flex-wrap">
+              ${item.tags.map(tag => `
+                <span class="px-2 py-1 text-sm border border-black rounded-full">
+                  ${tag}
+                </span>
+              `).join('')}
+            </div>
+          </a>
+        </article>
+      `)
+      .join('');
+
+    searchResults.innerHTML = html || '<p class="text-center text-gray-500">No results found</p>';
+  }
+
+  // Initialize on page load and view transitions
+  document.addEventListener('astro:page-load', initSearch);
+  
+  // Also initialize on initial page load
   initSearch();
 </script> 
