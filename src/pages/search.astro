@@ -2,12 +2,21 @@
 import Layout from '@layouts/Default.astro';
 import { Card } from '@eliancodes/brutal-ui';
 
-interface SearchResult {
+interface BaseResult {
   slug: string;
   title: string;
-  description: string;
   tags: string[];
 }
+
+interface SearchResult extends BaseResult {
+  description: string;
+}
+
+interface ReviewResult extends BaseResult {
+  description: string;
+}
+
+type SearchResultType = SearchResult | ReviewResult;
 ---
 
 <Layout
@@ -19,17 +28,16 @@ interface SearchResult {
     <div class="max-w-3xl mx-auto">
       <Card>
         <div class="p-4">
-          <!-- Search Container -->
           <div class="relative mb-4">
             <input
               type="text"
               id="search-input"
               placeholder="Search reviews..."
-              class="w-full px-4 py-3 text-lg border-2 border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-black pr-12 font-sanchez bg-white"
+              class="w-full px-4 py-3 text-base border-2 border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-black pr-12 font-sanchez bg-white"
             />
             <button 
-              id="clear-search"
-              class="absolute right-3 top-1/2 -translate-y-1/2 opacity-0 pointer-events-none"
+              id="clear-search" 
+              class="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center text-black hover:text-gray-700 opacity-0 pointer-events-none transition-all duration-200"
               aria-label="Clear search"
             >
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
@@ -37,8 +45,6 @@ interface SearchResult {
               </svg>
             </button>
           </div>
-
-          <!-- Results Container -->
           <div id="search-results" class="space-y-2">
             <!-- Results will be populated here -->
           </div>
@@ -51,121 +57,121 @@ interface SearchResult {
 <script>
   import Fuse from 'fuse.js';
 
-  class SearchHandler {
-    private fuse: Fuse<SearchResult> | null = null;
-    private searchInput: HTMLInputElement | null = null;
-    private searchResults: HTMLDivElement | null = null;
-    private clearButton: HTMLButtonElement | null = null;
+  interface BaseResult {
+    slug: string;
+    title: string;
+    tags: string[];
+  }
 
-    constructor() {
-      this.initializeElements();
-      this.setupEventListeners();
-      this.loadPreviousSearch();
-    }
+  interface SearchResult extends BaseResult {
+    description: string;
+  }
 
-    private async initializeElements() {
-      this.searchInput = document.getElementById('search-input') as HTMLInputElement;
-      this.searchResults = document.getElementById('search-results') as HTMLDivElement;
-      this.clearButton = document.getElementById('clear-search') as HTMLButtonElement;
+  interface ReviewResult extends BaseResult {
+    description: string;
+  }
 
-      if (!this.fuse) {
-        await this.initializeFuse();
-      }
-    }
+  type SearchResultType = SearchResult | ReviewResult;
 
-    private async initializeFuse() {
-      try {
-        const response = await fetch('/api/search-index');
-        if (!response.ok) throw new Error('Failed to fetch search index');
-        
-        const searchIndex: SearchResult[] = await response.json();
-        this.fuse = new Fuse(searchIndex, {
-          keys: ['title', 'description', 'tags'],
-          threshold: 0.3,
-          includeMatches: true
-        });
-      } catch (error) {
-        console.error('Search initialization failed:', error);
-      }
-    }
+  let fuse: Fuse<SearchResultType>;
+  let searchInput: HTMLInputElement | null;
+  let searchResults: HTMLDivElement | null;
+  let clearSearchButton: HTMLButtonElement | null;
 
-    private setupEventListeners() {
-      if (!this.searchInput || !this.clearButton) return;
+  async function initSearch() {
+    // Reset references
+    searchInput = document.getElementById('search-input') as HTMLInputElement;
+    searchResults = document.getElementById('search-results') as HTMLDivElement;
+    clearSearchButton = document.getElementById('clear-search') as HTMLButtonElement;
 
-      this.searchInput.addEventListener('input', (e) => this.handleSearch(e));
-      this.clearButton.addEventListener('click', () => this.clearSearch());
-    }
+    if (!searchInput || !searchResults || !clearSearchButton) return;
 
-    private loadPreviousSearch() {
-      if (!this.searchInput || !this.clearButton) return;
-
-      const previousSearch = sessionStorage.getItem('lastSearch');
-      if (previousSearch) {
-        this.searchInput.value = previousSearch;
-        this.handleSearch({ target: this.searchInput } as any);
-        this.clearButton.classList.remove('opacity-0', 'pointer-events-none');
-      }
-    }
-
-    private handleSearch(e: Event) {
-      const target = e.target as HTMLInputElement;
-      if (!this.searchResults || !this.fuse || !this.clearButton) return;
-
-      // Toggle clear button
-      this.clearButton.classList.toggle('opacity-0', !target.value);
-      this.clearButton.classList.toggle('pointer-events-none', !target.value);
-
-      // Save to session storage
-      sessionStorage.setItem('lastSearch', target.value);
-
-      if (!target.value) {
-        this.searchResults.innerHTML = '';
-        return;
-      }
-
-      const results = this.fuse.search(target.value);
-      this.renderResults(results);
-    }
-
-    private renderResults(results: Fuse.FuseResult<SearchResult>[]) {
-      if (!this.searchResults) return;
-
-      const html = results.length ? results
-        .map(({ item }) => `
-          <article class="p-3 border-2 border-black rounded-lg bg-yellow">
-            <a href="/blog/${item.slug}/" class="block">
-              <h2 class="text-lg font-bold mb-1 dm-serif">${item.title}</h2>
-              <p class="text-sm text-gray-800 mb-2 sanchez line-clamp-2">${item.description}</p>
-              <div class="flex gap-1.5 flex-wrap">
-                ${item.tags.map(tag => `
-                  <span class="px-2 py-0.5 text-xs border border-black rounded-full bg-pink sanchez">
-                    ${tag}
-                  </span>
-                `).join('')}
-              </div>
-            </a>
-          </article>
-        `).join('')
-        : '<p class="text-center text-gray-500 sanchez py-4">No results found</p>';
-
-      this.searchResults.innerHTML = html;
-    }
-
-    private clearSearch() {
-      if (!this.searchInput || !this.searchResults || !this.clearButton) return;
+    // Fetch search index if not already fetched
+    if (!fuse) {
+      const response = await fetch('/api/search-index');
+      const posts: SearchResultType[] = await response.json();
       
-      this.searchInput.value = '';
-      this.searchResults.innerHTML = '';
-      sessionStorage.removeItem('lastSearch');
-      this.clearButton.classList.add('opacity-0', 'pointer-events-none');
+      fuse = new Fuse(posts, {
+        keys: ['title', 'description', 'tags', 'content'],
+        threshold: 0.4,
+        includeMatches: true
+      });
+    }
+
+    // Clear any previous event listeners
+    const newSearchInput = searchInput.cloneNode(true) as HTMLInputElement;
+    const newClearButton = clearSearchButton.cloneNode(true) as HTMLButtonElement;
+    
+    searchInput.parentNode?.replaceChild(newSearchInput, searchInput);
+    clearSearchButton.parentNode?.replaceChild(newClearButton, clearSearchButton);
+    
+    searchInput = newSearchInput;
+    clearSearchButton = newClearButton;
+
+    // Add event listeners
+    searchInput.addEventListener('input', handleSearch);
+    clearSearchButton.addEventListener('click', clearSearch);
+    
+    // Restore previous search if exists
+    const previousSearch = sessionStorage.getItem('lastSearch');
+    if (previousSearch) {
+      searchInput.value = previousSearch;
+      handleSearch({ target: searchInput } as any);
+      clearSearchButton.classList.remove('opacity-0', 'pointer-events-none');
     }
   }
 
-  // Initialize search on page load and view transitions
-  function initSearch() {
-    new SearchHandler();
+  function handleSearch(e: Event) {
+    const target = e.target as HTMLInputElement;
+    if (!searchResults || !fuse || !clearSearchButton) return;
+
+    if (target.value) {
+      clearSearchButton.classList.remove('opacity-0', 'pointer-events-none');
+    } else {
+      clearSearchButton.classList.add('opacity-0', 'pointer-events-none');
+    }
+
+    sessionStorage.setItem('lastSearch', target.value);
+
+    if (!target.value) {
+      searchResults.innerHTML = '';
+      return;
+    }
+
+    const results = fuse.search(target.value);
+    const html = results
+      .map(({ item }) => `
+        <article class="p-3 border-2 border-black rounded-lg bg-yellow hover:bg-yellow-100 transition-colors">
+          <a href="/blog/${item.slug}/" class="block">
+            <h2 class="text-lg font-bold mb-1.5 dm-serif">${item.title}</h2>
+            <p class="text-sm text-gray-800 mb-2 sanchez line-clamp-2">${item.description}</p>
+            <div class="flex gap-1.5 flex-wrap">
+              ${item.tags.map(tag => `
+                <span class="px-2 py-0.5 text-xs border border-black rounded-full bg-pink hover:bg-pink-200 transition-colors sanchez">
+                  ${tag}
+                </span>
+              `).join('')}
+            </div>
+          </a>
+        </article>
+      `)
+      .join('');
+
+    searchResults.innerHTML = html || '<p class="text-center text-gray-500 sanchez py-4">No results found</p>';
   }
 
+  function clearSearch() {
+    if (!searchInput || !searchResults || !clearSearchButton) return;
+    
+    searchInput.value = '';
+    searchResults.innerHTML = '';
+    sessionStorage.removeItem('lastSearch');
+    clearSearchButton.classList.add('opacity-0', 'pointer-events-none');
+  }
+
+  // Initialize on page load and view transitions
   document.addEventListener('astro:page-load', initSearch);
+  
+  // Also initialize on initial page load
   initSearch();
 </script> 
