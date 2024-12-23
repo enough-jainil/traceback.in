@@ -16,9 +16,11 @@ export const GET: APIRoute = async () => {
       status: 200,
       headers: {
         "Content-Type": "application/json",
+        "Cache-Control": "public, max-age=3600",
       },
     });
   } catch (error) {
+    console.error("Failed to generate search index:", error);
     return new Response(
       JSON.stringify({ error: "Failed to load search index" }),
       {

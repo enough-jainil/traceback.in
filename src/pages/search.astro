@@ -1,8 +1,13 @@
 ---
 import Layout from '@layouts/Default.astro';
-import { getCollection } from 'astro:content';
+import { Card } from '@eliancodes/brutal-ui';
 
-const posts = await getCollection('blog');
+interface SearchResult {
+  slug: string;
+  title: string;
+  description: string;
+  tags: string[];
+}
 ---
 
 <Layout
@@ -12,17 +17,19 @@ const posts = await getCollection('blog');
 >
   <main class="min-h-screen bg-purple p-6">
     <div class="max-w-3xl mx-auto">
-      <div class="bg-white border-3 border-black p-4 rounded-lg card-shadow">
-        <input
-          type="text"
-          id="search-input"
-          placeholder="Search any article..."
-          class="w-full px-4 py-2 text-lg border-2 border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
-        />
-        <div id="search-results" class="mt-6 space-y-4">
-          <!-- Results will be populated here -->
+      <Card>
+        <div class="p-4">
+          <input
+            type="text"
+            id="search-input"
+            placeholder="Search any article..."
+            class="w-full px-4 py-2 text-lg border-2 border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+          />
+          <div id="search-results" class="mt-6 space-y-4">
+            <!-- Results will be populated here -->
+          </div>
         </div>
-      </div>
+      </Card>
     </div>
   </main>
 </Layout>
@@ -30,46 +37,61 @@ const posts = await getCollection('blog');
 <script>
   import Fuse from 'fuse.js';
 
-  const posts = await fetch('/api/search-index').then(res => res.json());
-  
-  const fuse = new Fuse(posts, {
-    keys: ['title', 'description', 'tags'],
-    threshold: 0.4,
-    includeMatches: true
-  });
+  interface SearchResult {
+    slug: string;
+    title: string;
+    description: string;
+    tags: string[];
+  }
 
-  const searchInput = document.getElementById('search-input');
-  const searchResults = document.getElementById('search-results');
+  let fuse: Fuse<SearchResult>;
 
-  searchInput?.addEventListener('input', (e) => {
-    const target = e.target as HTMLInputElement;
-    const results = fuse.search(target.value);
+  async function initSearch() {
+    const response = await fetch('/api/search-index');
+    const posts: SearchResult[] = await response.json();
+    
+    fuse = new Fuse(posts, {
+      keys: ['title', 'description', 'tags'],
+      threshold: 0.4,
+      includeMatches: true
+    });
 
-    if (!searchResults) return;
+    const searchInput = document.getElementById('search-input') as HTMLInputElement;
+    const searchResults = document.getElementById('search-results');
 
-    if (!target.value) {
-      searchResults.innerHTML = '';
-      return;
-    }
+    if (!searchInput || !searchResults) return;
 
-    const html = results
-      .map(({ item }) => `
-        <article class="p-4 border-2 border-black rounded-lg hover:bg-gray-50 transition-colors">
-          <a href="/blog/${item.slug}/" class="block">
-            <h2 class="text-xl font-bold mb-2">${item.title}</h2>
-            <p class="text-gray-600">${item.description}</p>
-            <div class="mt-2 flex gap-2 flex-wrap">
-              ${item.tags.map(tag => `
-                <span class="px-2 py-1 text-sm border border-black rounded-full">
-                  ${tag}
-                </span>
-              `).join('')}
-            </div>
-          </a>
-        </article>
-      `)
-      .join('');
+    searchInput.addEventListener('input', (e) => {
+      const target = e.target as HTMLInputElement;
+      const results = fuse.search(target.value);
 
-    searchResults.innerHTML = html || '<p class="text-center text-gray-500">No results found</p>';
-  });
+      if (!target.value) {
+        searchResults.innerHTML = '';
+        return;
+      }
+
+      const html = results
+        .map(({ item }) => `
+          <article class="p-4 border-2 border-black rounded-lg hover:bg-gray-50 transition-colors">
+            <a href="/blog/${item.slug}/" class="block">
+              <h2 class="text-xl font-bold mb-2">${item.title}</h2>
+              <p class="text-gray-600">${item.description}</p>
+              <div class="mt-2 flex gap-2 flex-wrap">
+                ${item.tags.map(tag => `
+                  <span class="px-2 py-1 text-sm border border-black rounded-full">
+                    ${tag}
+                  </span>
+                `).join('')}
+              </div>
+            </a>
+          </article>
+        `)
+        .join('');
+
+      searchResults.innerHTML = html || '<p class="text-center text-gray-500">No results found</p>';
+    });
+  }
+
+  // Initialize on page load
+  initSearch();
 </script> 
