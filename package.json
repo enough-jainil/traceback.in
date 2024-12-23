@@ -1,14 +1,14 @@
 {
-  "name": "nodename-main",
+  "name": "traceback-main",
   "version": "1.2.0",
   "type": "module",
   "packageManager": "pnpm@8.6.0",
   "author": {
-    "name": "Elian Van Cutsem",
-    "email": "hello@elian.codes",
-    "url": "https://www.elian.codes/"
+    "name": "Jainil Prajapati",
+    "email": "hello@eknerd.com",
+    "url": "https://eknerd.com/"
   },
-  "homepage": "https://brutal.elian.codes",
+  "homepage": "https://traceback.in/",
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
