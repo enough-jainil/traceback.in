@@ -141,19 +141,21 @@ type SearchResultType = SearchResult | ReviewResult;
     const results = fuse.search(target.value);
     const html = results
       .map(({ item }) => `
-        <article class="p-3 border-2 border-black rounded-lg bg-yellow hover:bg-yellow-100 transition-colors">
-          <a href="/blog/${item.slug}/" class="block">
-            <h2 class="text-lg font-bold mb-1.5 dm-serif">${item.title}</h2>
-            <p class="text-sm text-gray-800 mb-2 sanchez line-clamp-2">${item.description}</p>
-            <div class="flex gap-1.5 flex-wrap">
-              ${item.tags.map(tag => `
-                <span class="px-2 py-0.5 text-xs border border-black rounded-full bg-pink hover:bg-pink-200 transition-colors sanchez">
-                  ${tag}
-                </span>
-              `).join('')}
-            </div>
-          </a>
-        </article>
+        <div class="card-shadow">
+          <article class="p-3 border-2 border-black rounded-lg bg-green">
+            <a href="/blog/${item.slug}/" class="block">
+              <h2 class="text-lg font-bold mb-1.5 dm-serif">${item.title}</h2>
+              <p class="text-sm text-gray-800 mb-2 sanchez line-clamp-2">${item.description}</p>
+              <div class="flex gap-1.5 flex-wrap">
+                ${item.tags.map(tag => `
+                  <span class="px-2 py-0.5 text-xs border border-black rounded-full bg-pink sanchez">
+                    ${tag}
+                  </span>
+                `).join('')}
+              </div>
+            </a>
+          </article>
+        </div>
       `)
       .join('');
 
@@ -175,3 +177,14 @@ type SearchResultType = SearchResult | ReviewResult;
   // Also initialize on initial page load
   initSearch();
 </script> 
+
+<style>
+  .card-shadow {
+    filter: drop-shadow(4px 4px 0 rgb(0 0 0 / 1));
+    transition: all 0.2s ease-in-out;
+  }
+  .card-shadow:hover {
+    filter: drop-shadow(6px 6px 0 rgb(0 0 0 / 1));
+    transform: translateY(-2px);
+  }
+</style> 
