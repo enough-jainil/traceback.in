@@ -19,9 +19,9 @@ const ogImage = new URL(`/v1/generate/og/${Astro.params.slug}.png`, Astro.url);
     <MovieDetails movieId={movieId} />
     
     <!-- Review Content -->
-    <div class="text-xl max-w-7xl mx-auto px-4 py-8 prose prose-lg">
-        <slot />
-      
+    <div class="max-w-7xl mx-auto px-4 py-8 prose prose-lg">
+      <h1 class="">{title}</h1>
+      <slot />
     </div>
   </main>
 </Layout>
