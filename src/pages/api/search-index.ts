@@ -10,8 +10,7 @@ export const GET: APIRoute = async () => {
       description: post.data.description,
       tags: post.data.tags,
       slug: post.slug,
-      content: post.data.content, // Added content field
-      pubDate: post.data.pubDate, // Added publication date field
+      pubDate: post.data.pubDate,
     }));
 
     return new Response(JSON.stringify(searchIndex), {

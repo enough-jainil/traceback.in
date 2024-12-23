@@ -2,21 +2,13 @@
 import Layout from '@layouts/Default.astro';
 import { Card } from '@eliancodes/brutal-ui';
 
-interface BaseResult {
+interface SearchResult {
   slug: string;
   title: string;
+  description: string;
   tags: string[];
+  pubDate: Date;
 }
-
-interface SearchResult extends BaseResult {
-  description: string;
-}
-
-interface ReviewResult extends BaseResult {
-  description: string;
-}
-
-type SearchResultType = SearchResult | ReviewResult;
 ---
 
 <Layout
@@ -57,23 +49,15 @@ type SearchResultType = SearchResult | ReviewResult;
 <script>
   import Fuse from 'fuse.js';
 
-  interface BaseResult {
+  interface SearchResult {
     slug: string;
     title: string;
+    description: string;
     tags: string[];
+    pubDate: Date;
   }
 
-  interface SearchResult extends BaseResult {
-    description: string;
-  }
-
-  interface ReviewResult extends BaseResult {
-    description: string;
-  }
-
-  type SearchResultType = SearchResult | ReviewResult;
-
-  let fuse: Fuse<SearchResultType>;
+  let fuse: Fuse<SearchResult>;
   let searchInput: HTMLInputElement | null;
   let searchResults: HTMLDivElement | null;
   let clearSearchButton: HTMLButtonElement | null;
@@ -89,10 +73,10 @@ type SearchResultType = SearchResult | ReviewResult;
     // Fetch search index if not already fetched
     if (!fuse) {
       const response = await fetch('/api/search-index');
-      const posts: SearchResultType[] = await response.json();
+      const posts: SearchResult[] = await response.json();
       
       fuse = new Fuse(posts, {
-        keys: ['title', 'description', 'tags', 'content'],
+        keys: ['title', 'description', 'tags', 'pubDate'],
         threshold: 0.4,
         includeMatches: true
       });
@@ -142,7 +126,7 @@ type SearchResultType = SearchResult | ReviewResult;
     const html = results
       .map(({ item }) => `
         <div class="card-shadow">
-          <article class="p-3 border-2 border-black rounded-lg bg-green">
+          <article class="p-3 border-2 border-black rounded-lg bg-yellow">
             <a href="/blog/${item.slug}/" class="block">
               <h2 class="text-lg font-bold mb-1.5 dm-serif">${item.title}</h2>
               <p class="text-sm text-gray-800 mb-2 sanchez line-clamp-2">${item.description}</p>
