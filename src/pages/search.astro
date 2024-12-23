@@ -33,7 +33,7 @@ type SearchResultType = SearchResult | ReviewResult;
               type="text"
               id="search-input"
               placeholder="Search reviews..."
-              class="w-full px-6 py-4 text-lg border-4 border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-black pr-12 font-sanchez"
+              class="w-full px-6 py-4 text-lg border-4 border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-black pr-12 font-"
             />
             <button 
               id="clear-search" 
@@ -144,10 +144,10 @@ type SearchResultType = SearchResult | ReviewResult;
         <article class="p-4 border-4 border-black rounded-lg bg-pink hover:bg-pink-200 transition-colors">
           <a href="/blog/${item.slug}/" class="block">
             <h2 class="text-2xl font-bold mb-2 dm-serif">${item.title}</h2>
-            <p class="text-gray-800 mb-3 sanchez">${item.description}</p>
+            <p class="text-gray-800 mb-3 ">${item.description}</p>
             <div class="flex gap-2 flex-wrap">
               ${item.tags.map(tag => `
-                <span class="px-3 py-1 text-sm border-2 border-black rounded-full bg-purple hover:bg-purple-400 transition-colors sanchez">
+                <span class="px-3 py-1 text-sm border-2 border-black rounded-full bg-purple hover:bg-purple-400 transition-colors ">
                   ${tag}
                 </span>
               `).join('')}
@@ -157,7 +157,7 @@ type SearchResultType = SearchResult | ReviewResult;
       `)
       .join('');
 
-    searchResults.innerHTML = html || '<p class="text-center text-gray-500 sanchez">No results found</p>';
+    searchResults.innerHTML = html || '<p class="text-center text-gray-500 ">No results found</p>';
   }
 
   function clearSearch() {
