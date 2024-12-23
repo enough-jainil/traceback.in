@@ -19,25 +19,25 @@ interface SearchResult {
   <main class="min-h-screen bg-purple p-6">
     <div class="max-w-3xl mx-auto">
       <Card>
-        <div class="p-4">
-          <div class="relative mb-4">
+        <div class="p-6">
+          <div class="relative mb-8">
             <input
               type="text"
               id="search-input"
               placeholder="Search reviews..."
-              class="w-full px-4 py-3 text-base border-2 border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-black pr-12 font-sanchez bg-white"
+              class="w-full px-6 py-4 text-lg border-4 border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-black pr-12 font-sanchez"
             />
             <button 
               id="clear-search" 
-              class="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center text-black hover:text-gray-700 opacity-0 pointer-events-none transition-all duration-200"
+              class="absolute right-4 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center text-black hover:text-gray-700 transition-opacity duration-200"
               aria-label="Clear search"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="w-6 h-6">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
           </div>
-          <div id="search-results" class="space-y-2">
+          <div id="search-results" class="space-y-4">
             <!-- Results will be populated here -->
           </div>
         </div>
@@ -49,15 +49,23 @@ interface SearchResult {
 <script>
   import Fuse from 'fuse.js';
 
-  interface SearchResult {
+  interface BaseResult {
     slug: string;
     title: string;
-    description: string;
     tags: string[];
-    pubDate: Date;
   }
 
-  let fuse: Fuse<SearchResult>;
+  interface SearchResult extends BaseResult {
+    description: string;
+  }
+
+  interface ReviewResult extends BaseResult {
+    description: string;
+  }
+
+  type SearchResultType = SearchResult | ReviewResult;
+
+  let fuse: Fuse<SearchResultType>;
   let searchInput: HTMLInputElement | null;
   let searchResults: HTMLDivElement | null;
   let clearSearchButton: HTMLButtonElement | null;
@@ -73,10 +81,10 @@ interface SearchResult {
     // Fetch search index if not already fetched
     if (!fuse) {
       const response = await fetch('/api/search-index');
-      const posts: SearchResult[] = await response.json();
+      const posts: SearchResultType[] = await response.json();
       
       fuse = new Fuse(posts, {
-        keys: ['title', 'description', 'tags', 'pubDate'],
+        keys: ['title', 'description', 'tags', 'content'],
         threshold: 0.4,
         includeMatches: true
       });
@@ -125,25 +133,23 @@ interface SearchResult {
     const results = fuse.search(target.value);
     const html = results
       .map(({ item }) => `
-        <div class="card-shadow">
-          <article class="p-3 border-2 border-black rounded-lg bg-yellow">
-            <a href="/blog/${item.slug}/" class="block">
-              <h2 class="text-lg font-bold mb-1.5 dm-serif">${item.title}</h2>
-              <p class="text-sm text-gray-800 mb-2 sanchez line-clamp-2">${item.description}</p>
-              <div class="flex gap-1.5 flex-wrap">
-                ${item.tags.map(tag => `
-                  <span class="px-2 py-0.5 text-xs border border-black rounded-full bg-pink sanchez">
-                    ${tag}
-                  </span>
-                `).join('')}
-              </div>
-            </a>
-          </article>
-        </div>
+        <article class="p-4 border-4 border-black rounded-lg bg-pink hover:bg-pink-200 transition-colors">
+          <a href="/blog/${item.slug}/" class="block">
+            <h2 class="text-2xl font-bold mb-2 dm-serif">${item.title}</h2>
+            <p class="text-gray-800 mb-3 sanchez">${item.description}</p>
+            <div class="flex gap-2 flex-wrap">
+              ${item.tags.map(tag => `
+                <span class="px-3 py-1 text-sm border-2 border-black rounded-full bg-purple hover:bg-purple-400 transition-colors sanchez">
+                  ${tag}
+                </span>
+              `).join('')}
+            </div>
+          </a>
+        </article>
       `)
       .join('');
 
-    searchResults.innerHTML = html || '<p class="text-center text-gray-500 sanchez py-4">No results found</p>';
+    searchResults.innerHTML = html || '<p class="text-center text-gray-500 sanchez">No results found</p>';
   }
 
   function clearSearch() {
@@ -161,14 +167,3 @@ interface SearchResult {
   // Also initialize on initial page load
   initSearch();
 </script> 
-
-<style>
-  .card-shadow {
-    filter: drop-shadow(4px 4px 0 rgb(0 0 0 / 1));
-    transition: all 0.2s ease-in-out;
-  }
-  .card-shadow:hover {
-    filter: drop-shadow(6px 6px 0 rgb(0 0 0 / 1));
-    transform: translateY(-2px);
-  }
-</style> 
