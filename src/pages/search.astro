@@ -2,19 +2,21 @@
 import Layout from '@layouts/Default.astro';
 import { Card } from '@eliancodes/brutal-ui';
 
-interface SearchResult {
+interface BaseResult {
   slug: string;
   title: string;
-  description: string;
   tags: string[];
 }
 
-interface ReviewResult {
-  slug: string;
-  title: string;
-  content: string;
-  tags: string[];
+interface SearchResult extends BaseResult {
+  description: string;
 }
+
+interface ReviewResult extends BaseResult {
+  content: string;
+}
+
+type SearchResultType = SearchResult | ReviewResult;
 ---
 
 <Layout
@@ -55,21 +57,23 @@ interface ReviewResult {
 <script>
   import Fuse from 'fuse.js';
 
-  interface SearchResult {
+  interface BaseResult {
     slug: string;
     title: string;
+    tags: string[];
+  }
+
+  interface SearchResult extends BaseResult {
     description: string;
-    tags: string[];
   }
 
-  interface ReviewResult {
-    slug: string;
-    title: string;
+  interface ReviewResult extends BaseResult {
     content: string;
-    tags: string[];
   }
 
-  let fuse: Fuse<SearchResult | ReviewResult>;
+  type SearchResultType = SearchResult | ReviewResult;
+
+  let fuse: Fuse<SearchResultType>;
   let searchInput: HTMLInputElement | null;
   let searchResults: HTMLDivElement | null;
   let clearSearchButton: HTMLButtonElement | null;
@@ -85,7 +89,7 @@ interface ReviewResult {
     // Fetch search index if not already fetched
     if (!fuse) {
       const response = await fetch('/api/search-index');
-      const posts: (SearchResult | ReviewResult)[] = await response.json();
+      const posts: SearchResultType[] = await response.json();
       
       fuse = new Fuse(posts, {
         keys: ['title', 'description', 'tags', 'content'],
