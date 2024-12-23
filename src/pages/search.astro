@@ -28,12 +28,12 @@ type SearchResultType = SearchResult | ReviewResult;
     <div class="max-w-3xl mx-auto">
       <Card>
         <div class="p-6">
-          <div class="relative mb-8">
+          <div class="relative mb-4">
             <input
               type="text"
               id="search-input"
               placeholder="Search reviews..."
-              class="w-full px-6 py-4 text-lg border-4 border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-black pr-12 font-sanchez"
+              class="w-full px-6 py-3 text-lg border-4 border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-black pr-12 font-sanchez"
             />
             <button 
               id="clear-search" 
@@ -45,7 +45,7 @@ type SearchResultType = SearchResult | ReviewResult;
               </svg>
             </button>
           </div>
-          <div id="search-results" class="space-y-4">
+          <div id="search-results" class="space-y-3">
             <!-- Results will be populated here -->
           </div>
         </div>
@@ -141,13 +141,13 @@ type SearchResultType = SearchResult | ReviewResult;
     const results = fuse.search(target.value);
     const html = results
       .map(({ item }) => `
-        <article class="p-4 border-4 border-black rounded-lg bg-pink hover:bg-pink-200 transition-colors">
+        <article class="p-3 border-2 border-black rounded-lg bg-pink">
           <a href="/blog/${item.slug}/" class="block">
-            <h2 class="text-2xl font-bold mb-2 dm-serif">${item.title}</h2>
-            <p class="text-gray-800 mb-3 sanchez">${item.description}</p>
+            <h2 class="text-xl font-bold mb-2 dm-serif">${item.title}</h2>
+            <p class="text-gray-800 mb-2 sanchez text-sm">${item.description}</p>
             <div class="flex gap-2 flex-wrap">
               ${item.tags.map(tag => `
-                <span class="px-3 py-1 text-sm border-2 border-black rounded-full bg-purple hover:bg-purple-400 transition-colors sanchez">
+                <span class="px-2 py-1 text-xs border border-black rounded-full bg-purple text-white sanchez">
                   ${tag}
                 </span>
               `).join('')}
