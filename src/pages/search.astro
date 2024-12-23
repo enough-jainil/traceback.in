@@ -8,6 +8,13 @@ interface SearchResult {
   description: string;
   tags: string[];
 }
+
+interface ReviewResult {
+  slug: string;
+  title: string;
+  content: string;
+  tags: string[];
+}
 ---
 
 <Layout
@@ -19,12 +26,23 @@ interface SearchResult {
     <div class="max-w-3xl mx-auto">
       <Card>
         <div class="p-4">
-          <input
-            type="text"
-            id="search-input"
-            placeholder="Search any article..."
-            class="w-full px-4 py-2 text-lg border-2 border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
-          />
+          <div class="relative">
+            <input
+              type="text"
+              id="search-input"
+              placeholder="Search any review..."
+              class="w-full px-4 py-2 text-lg border-2 border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-black pr-10"
+            />
+            <button 
+              id="clear-search" 
+              class="absolute right-3 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center text-gray-500 hover:text-gray-900 opacity-0 pointer-events-none transition-opacity duration-200"
+              aria-label="Clear search"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
           <div id="search-results" class="mt-6 space-y-4">
             <!-- Results will be populated here -->
           </div>
@@ -44,24 +62,33 @@ interface SearchResult {
     tags: string[];
   }
 
-  let fuse: Fuse<SearchResult>;
+  interface ReviewResult {
+    slug: string;
+    title: string;
+    content: string;
+    tags: string[];
+  }
+
+  let fuse: Fuse<SearchResult | ReviewResult>;
   let searchInput: HTMLInputElement | null;
   let searchResults: HTMLDivElement | null;
+  let clearSearchButton: HTMLButtonElement | null;
 
   async function initSearch() {
     // Reset references
     searchInput = document.getElementById('search-input') as HTMLInputElement;
     searchResults = document.getElementById('search-results') as HTMLDivElement;
+    clearSearchButton = document.getElementById('clear-search') as HTMLButtonElement;
 
-    if (!searchInput || !searchResults) return;
+    if (!searchInput || !searchResults || !clearSearchButton) return;
 
     // Fetch search index if not already fetched
     if (!fuse) {
       const response = await fetch('/api/search-index');
-      const posts: SearchResult[] = await response.json();
+      const posts: (SearchResult | ReviewResult)[] = await response.json();
       
       fuse = new Fuse(posts, {
-        keys: ['title', 'description', 'tags'],
+        keys: ['title', 'description', 'tags', 'content'],
         threshold: 0.4,
         includeMatches: true
       });
@@ -69,23 +96,37 @@ interface SearchResult {
 
     // Clear any previous event listeners
     const newSearchInput = searchInput.cloneNode(true) as HTMLInputElement;
+    const newClearButton = clearSearchButton.cloneNode(true) as HTMLButtonElement;
+    
     searchInput.parentNode?.replaceChild(newSearchInput, searchInput);
+    clearSearchButton.parentNode?.replaceChild(newClearButton, clearSearchButton);
+    
     searchInput = newSearchInput;
+    clearSearchButton = newClearButton;
 
-    // Add event listener
+    // Add event listeners
     searchInput.addEventListener('input', handleSearch);
+    clearSearchButton.addEventListener('click', clearSearch);
     
     // Restore previous search if exists
     const previousSearch = sessionStorage.getItem('lastSearch');
     if (previousSearch) {
       searchInput.value = previousSearch;
       handleSearch({ target: searchInput } as any);
+      clearSearchButton.classList.remove('opacity-0', 'pointer-events-none');
     }
   }
 
   function handleSearch(e: Event) {
     const target = e.target as HTMLInputElement;
-    if (!searchResults || !fuse) return;
+    if (!searchResults || !fuse || !clearSearchButton) return;
+
+    // Toggle clear button visibility
+    if (target.value) {
+      clearSearchButton.classList.remove('opacity-0', 'pointer-events-none');
+    } else {
+      clearSearchButton.classList.add('opacity-0', 'pointer-events-none');
+    }
 
     // Save search term
     sessionStorage.setItem('lastSearch', target.value);
@@ -101,7 +142,7 @@ interface SearchResult {
         <article class="p-4 border-2 border-black rounded-lg hover:bg-gray-50 transition-colors">
           <a href="/blog/${item.slug}/" class="block">
             <h2 class="text-xl font-bold mb-2">${item.title}</h2>
-            <p class="text-gray-600">${item.description}</p>
+            <p class="text-gray-600">${item.description || item.content}</p>
             <div class="mt-2 flex gap-2 flex-wrap">
               ${item.tags.map(tag => `
                 <span class="px-2 py-1 text-sm border border-black rounded-full">
@@ -115,6 +156,15 @@ interface SearchResult {
       .join('');
 
     searchResults.innerHTML = html || '<p class="text-center text-gray-500">No results found</p>';
+  }
+
+  function clearSearch() {
+    if (!searchInput || !searchResults || !clearSearchButton) return;
+    
+    searchInput.value = '';
+    searchResults.innerHTML = '';
+    sessionStorage.removeItem('lastSearch');
+    clearSearchButton.classList.add('opacity-0', 'pointer-events-none');
   }
 
   // Initialize on page load and view transitions
