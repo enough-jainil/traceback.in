@@ -23,6 +23,8 @@ const { title, description, ogImage } = Astro.props;
   <meta name='viewport' content='width=device-width, initial-scale=1' />
   <meta name='generator' content={Astro.generator} />
 
+  <meta name="view-transition" content="same-origin" />
+
   <link
     rel='alternate'
     href='https://traceback.in/blog.xml'
@@ -49,7 +51,7 @@ const { title, description, ogImage } = Astro.props;
 
   <title>Traceback | {title}</title>
 
-  <ViewTransitions />
+  <ViewTransitions fallback="swap" />
 
   <slot />
 </head>
