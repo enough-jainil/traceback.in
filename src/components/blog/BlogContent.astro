@@ -7,21 +7,11 @@ const { content } = Astro.props;
 ---
 
 <article class='prose-slate w-sm md:w-prose md:prose poppins'>
-  <button 
-    onclick="window.history.length > 1 ? window.history.back() : window.location.href='/blog/'" 
-    class="hover:text-stone transition-all duration-150 ease-in-out"
-  >
-    &larr; Back to blog
-  </button>
+  <a href='/blog/' title='Back to blog'>&larr; Back to blog</a>
   <p class='text-slate text-sm md:text-base'>
     Published on {content.pubDate} by {content.author}
   </p>
   <slot />
   <p class='text-slate'>Written by {content.author}</p>
-  <button 
-    onclick="window.history.length > 1 ? window.history.back() : window.location.href='/blog/'" 
-    class="hover:text-stone transition-all duration-150 ease-in-out"
-  >
-    &larr; Back to blog
-  </button>
+  <a href='/blog/' title='Back to blog'>&larr; Back to blog</a>
 </article>
