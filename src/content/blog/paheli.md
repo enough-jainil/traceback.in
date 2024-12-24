@@ -56,6 +56,6 @@ So, while the movie is a cinematic treat for its visuals and performances, it le
 
 ---
 
-### **Bonus PJ-Style Takeaway**
+### **Bonus Takeaway**
 
 “_Pyaar ek paheli hai, par agar usmein imaandaari nahi hai, toh woh sirf ek chhalava ban ke reh jaata hai._”
