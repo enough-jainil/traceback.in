@@ -31,17 +31,5 @@ const { title, description, classList, pageTitle, ogImage, showRecent = false } 
     )}
     
     <BaseFooter />
-
-    <script>
-      document.addEventListener('astro:after-swap', () => {
-        if (window.navigation) {
-          window.navigation.addEventListener('navigate', (event) => {
-            if (event.navigationType === 'back') {
-              window.history.back();
-            }
-          });
-        }
-      });
-    </script>
   </body>
 </html>
